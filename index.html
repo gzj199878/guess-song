@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>猜歌词大挑战</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--neon1:#ff6ec7;--neon2:#7c5cfc;--neon3:#00d4ff;--neon4:#00ffaa;--bg1:#0d0221;--bg2:#150535;--card:rgba(255,255,255,0.05)}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(160deg,var(--bg1),var(--bg2),#0a0520);min-height:100vh;color:#fff;overflow-x:hidden}
+.app{max-width:540px;margin:0 auto;padding:14px;min-height:100vh;display:flex;flex-direction:column;position:relative;z-index:1}
+.glow{position:fixed;pointer-events:none;z-index:0}
+.g1{top:-10%;left:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(255,110,199,0.12),transparent 70%);border-radius:50%}
+.g2{bottom:-10%;right:-10%;width:45vw;height:45vw;background:radial-gradient(circle,rgba(0,212,255,0.1),transparent 70%);border-radius:50%}
+.notes{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.nt{position:absolute;opacity:.1;animation:fl linear infinite}
+@keyframes fl{0%{transform:translateY(105vh) rotate(0);opacity:0}8%{opacity:.1}92%{opacity:.1}100%{transform:translateY(-5vh) rotate(360deg);opacity:0}}
+.hd{text-align:center;padding:16px 0 10px}
+.hd-t{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--neon1),var(--neon2),var(--neon3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd-s{font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:4px;margin-top:2px}
+
+/* 模式选择卡片 */
+.mode-cards{display:flex;flex-direction:column;gap:14px;margin-top:20px;width:100%}
+.mode-card{padding:20px;border-radius:18px;cursor:pointer;transition:all .3s;border:1.5px solid rgba(255,255,255,0.08);position:relative;overflow:hidden}
+.mode-card:hover{transform:translateY(-3px)}
+.mode-card::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;border-radius:0 0 0 120px;opacity:.08}
+.mc-song{background:linear-gradient(135deg,rgba(124,92,252,0.12),rgba(0,212,255,0.08))}
+.mc-song:hover{border-color:rgba(124,92,252,0.4);box-shadow:0 8px 30px rgba(124,92,252,0.15)}
+.mc-song::before{background:var(--neon2)}
+.mc-artist{background:linear-gradient(135deg,rgba(255,110,199,0.12),rgba(251,191,36,0.08))}
+.mc-artist:hover{border-color:rgba(255,110,199,0.4);box-shadow:0 8px 30px rgba(255,110,199,0.15)}
+.mc-artist::before{background:var(--neon1)}
+.mc-writer{background:linear-gradient(135deg,rgba(0,255,170,0.12),rgba(0,212,255,0.08))}
+.mc-writer:hover{border-color:rgba(0,255,170,0.4);box-shadow:0 8px 30px rgba(0,255,170,0.15)}
+.mc-writer::before{background:var(--neon4)}
+.mc-icon{font-size:32px;margin-bottom:6px}
+.mc-title{font-size:18px;font-weight:800;margin-bottom:4px}
+.mc-desc{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6}
+.mc-count{position:absolute;top:16px;right:16px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.mc-song .mc-title{color:#c4b5fd}.mc-song .mc-count{background:rgba(124,92,252,0.15);color:#c4b5fd}
+.mc-artist .mc-title{color:#fbbf24}.mc-artist .mc-count{background:rgba(255,110,199,0.15);color:var(--neon1)}
+.mc-writer .mc-title{color:var(--neon4)}.mc-writer .mc-count{background:rgba(0,255,170,0.15);color:var(--neon4)}
+
+/* 难度选择 */
+.diff-row{display:flex;gap:8px;margin-top:14px}
+.diff{flex:1;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s}
+.diff:hover,.diff.a{color:#fff}
+
+/* 信息栏/计时器/卡片等复用V3样式 */
+.bar{display:flex;gap:6px;margin-bottom:12px}
+.bar-i{flex:1;text-align:center;padding:8px 2px;background:var(--card);border-radius:12px;border:1px solid rgba(255,255,255,0.05)}
+.bar-l{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px}
+.bar-v{font-size:18px;font-weight:800;margin-top:1px}
+.c1{color:var(--neon1)}.c3{color:var(--neon4)}.c4{color:#fbbf24}.c5{color:#f87171}
+.timer{height:3px;background:rgba(255,255,255,0.06);border-radius:10px;margin-bottom:16px;overflow:hidden}
+.timer-fill{height:100%;border-radius:10px;transition:width 1s linear}
+.timer-ok{background:linear-gradient(90deg,var(--neon4),var(--neon3))}.timer-warn{background:linear-gradient(90deg,#fbbf24,var(--neon1))}.timer-danger{background:linear-gradient(90deg,#f87171,#ff6ec7)}
+.card{background:var(--card);backdrop-filter:blur(20px);border-radius:20px;padding:20px;border:1px solid rgba(255,255,255,0.06);flex:1;display:flex;flex-direction:column;animation:fu .3s ease}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.q-type{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
+.q-badge{padding:6px 20px;border-radius:50px;font-size:14px;font-weight:800;letter-spacing:2px}
+.qb-song{background:linear-gradient(135deg,rgba(124,92,252,0.3),rgba(0,212,255,0.3));border:1px solid rgba(124,92,252,0.4);color:#c4b5fd}
+.qb-artist{background:linear-gradient(135deg,rgba(255,110,199,0.3),rgba(251,191,36,0.3));border:1px solid rgba(255,110,199,0.4);color:#fbbf24}
+.qb-writer{background:linear-gradient(135deg,rgba(0,255,170,0.3),rgba(0,212,255,0.3));border:1px solid rgba(0,255,170,0.4);color:var(--neon4)}
+.lang-tag{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.lt-c{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.2)}
+.lt-m{background:rgba(0,255,170,0.15);color:var(--neon4);border:1px solid rgba(0,255,170,0.2)}
+.lyric-wrap{margin-bottom:16px;flex:1}
+.lyric-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:28px 16px;text-align:center;margin-bottom:10px;position:relative;overflow:hidden}
+.lyric-box::before{content:'♪';position:absolute;top:8px;left:12px;font-size:14px;opacity:.08}
+.lyric-box::after{content:'♫';position:absolute;bottom:8px;right:12px;font-size:14px;opacity:.08}
+.l-main{font-size:28px;line-height:1.9;letter-spacing:3px;font-weight:600}
+.l-sub{font-size:18px;line-height:1.8;letter-spacing:2px;font-weight:400;color:rgba(255,255,255,0.45)}
+.ch{display:inline-block;transition:all .3s}
+.ch-v{color:#f0f0f0}.ch-sp{min-width:.5em}
+.ch-h{color:transparent;background:linear-gradient(135deg,rgba(255,110,199,0.25),rgba(124,92,252,0.25));border-radius:4px;margin:0 1px;min-width:1.3em;border-bottom:2.5px solid rgba(255,110,199,0.5)}
+.ch-r{color:var(--neon3);animation:cr .4s}
+@keyframes cr{from{transform:scale(1.4);color:var(--neon1)}to{transform:scale(1);color:var(--neon3)}}
+.hints{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+.hint{padding:4px 12px;background:rgba(124,92,252,0.1);border-radius:20px;font-size:11px;color:#c4b5fd;border:1px solid rgba(124,92,252,0.15)}
+.ans{margin-top:auto}
+.ans-label{font-size:12px;font-weight:600;color:rgba(255,255,255,0.45);letter-spacing:1px;margin-bottom:8px;text-align:center}
+.slots{display:flex;gap:6px;justify-content:center;margin-bottom:14px}
+.sl{width:44px;height:52px;border-radius:12px;background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;transition:all .2s}
+.sl.f{border-color:rgba(124,92,252,0.5);background:rgba(124,92,252,0.1);color:#c4b5fd;box-shadow:0 0 12px rgba(124,92,252,0.15)}
+.sl.no{border-color:#f87171;background:rgba(248,113,113,0.1);color:#f87171;animation:sk .4s}
+@keyframes sk{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.inp-row{display:flex;gap:8px}
+.inp{flex:1;padding:14px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;color:#fff;font-size:18px;font-weight:600;outline:none;text-align:center;letter-spacing:3px;transition:all .2s}
+.inp:focus{border-color:rgba(124,92,252,0.6);box-shadow:0 0 20px rgba(124,92,252,0.15)}
+.inp::placeholder{color:rgba(255,255,255,0.15);font-weight:400;letter-spacing:1px}
+.sub-btn{padding:14px 28px;background:linear-gradient(135deg,var(--neon2),var(--neon1));border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.sub-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(255,110,199,0.3)}
+.acts{display:flex;gap:8px;margin-top:10px}
+.act{flex:1;padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:rgba(255,255,255,0.4);font-size:12px;cursor:pointer;transition:all .2s;text-align:center}
+.act:hover{background:rgba(255,255,255,0.08);color:#fff}
+.act:disabled{opacity:.25;cursor:not-allowed}
+.res{text-align:center;padding:16px 0;animation:fu .35s}
+.res-ic{font-size:52px;margin-bottom:6px}
+.res-msg{font-size:17px;font-weight:700}
+.res-name{font-size:30px;font-weight:900;margin:6px 0;background:linear-gradient(135deg,var(--neon1),var(--neon2),var(--neon3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.res-det{font-size:13px;color:rgba(255,255,255,0.35);line-height:1.8}
+.res-pts{display:inline-block;padding:5px 16px;background:linear-gradient(135deg,rgba(0,255,170,0.15),rgba(0,212,255,0.15));border-radius:20px;color:var(--neon4);font-size:14px;font-weight:700;margin-top:8px;border:1px solid rgba(0,255,170,0.2)}
+.nxt{width:100%;padding:16px;background:linear-gradient(135deg,var(--neon2),var(--neon1));border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:14px;letter-spacing:1px;transition:all .2s}
+.nxt:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,110,199,0.3)}
+.ctr{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.fs{font-size:72px;font-weight:900;background:linear-gradient(135deg,var(--neon1),var(--neon2),var(--neon3),var(--neon4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0}
+.tb{display:inline-block;padding:10px 28px;background:linear-gradient(135deg,rgba(255,110,199,0.15),rgba(124,92,252,0.15));border:1.5px solid rgba(255,110,199,0.3);border-radius:50px;font-size:22px;font-weight:800;color:var(--neon1);margin:8px 0;letter-spacing:3px;text-shadow:0 0 20px rgba(255,110,199,0.3)}
+.sh{padding:12px 40px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:50px;color:#fff;font-size:14px;cursor:pointer;margin-top:12px;transition:all .2s}
+.sh:hover{background:rgba(255,255,255,0.12)}
+.back{padding:8px 20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:50px;color:rgba(255,255,255,0.5);font-size:13px;cursor:pointer;margin-top:12px;transition:all .2s}
+.back:hover{color:#fff;background:rgba(255,255,255,0.1)}
+.combo-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:52px;font-weight:900;pointer-events:none;animation:ca 1.2s ease forwards;z-index:100}
+@keyframes ca{0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-80%) scale(.7)}}
+</style>
+</head>
+<body>
+<div class="glow g1"></div><div class="glow g2"></div>
+<div class="notes" id="ns"></div>
+<div class="app" id="app"></div>
+<script>
+// === 题库 ===
+const SONG_DB=[
+{n:'海阔天空',a:'Beyond',l:'原谅我这一生不羁放纵爱自由',l2:'也会怕有一天会跌倒',g:'c',c:'经典摇滚'},
+{n:'光辉岁月',a:'Beyond',l:'风雨中抱紧自由',l2:'一生经过彷徨的挣扎',g:'c',c:'经典摇滚'},
+{n:'真的爱你',a:'Beyond',l:'无法可修饰的一对手',l2:'带出温暖永远在背后',g:'c',c:'Beyond'},
+{n:'喜欢你',a:'Beyond',l:'细雨带风湿透黄昏的街道',l2:'抹去雨水双眼无故地仰望',g:'c',c:'Beyond'},
+{n:'情人',a:'Beyond',l:'是缘是情是童真 还是意外',l2:'有泪有罪有付出 还有忍耐',g:'c',c:'Beyond'},
+{n:'不再犹豫',a:'Beyond',l:'谁人定我去或留 定我心中的宇宙',l2:'只想靠两手向理想挥手',g:'c',c:'Beyond'},
+{n:'大地',a:'Beyond',l:'回望昨日在异乡那门前',l2:'唏嘘的感慨一年年',g:'c',c:'Beyond'},
+{n:'富士山下',a:'陈奕迅',l:'拦路雨偏似雪花 饮泣的你冻吗',l2:'谁能凭爱意要富士山私有',g:'c',c:'Eason'},
+{n:'浮夸',a:'陈奕迅',l:'有人问我 我就会放大来演',l2:'那年十八 母校舞会 站着如喽啰',g:'c',c:'Eason'},
+{n:'K歌之王',a:'陈奕迅',l:'我唱得不够动人 你别皱眉',l2:'我愿意和你约定至死',g:'c',c:'Eason'},
+{n:'岁月如歌',a:'陈奕迅',l:'天气不似预期 但要走总要飞',l2:'岁月如歌 你为我唱过',g:'c',c:'Eason'},
+{n:'单车',a:'陈奕迅',l:'难离难舍想抱紧些',l2:'茫茫人生好像荒野',g:'c',c:'Eason'},
+{n:'最佳损友',a:'陈奕迅',l:'朋友 我当你一世朋友',l2:'一直走到以后',g:'c',c:'Eason'},
+{n:'无条件',a:'陈奕迅',l:'其实我只想你好 无条件为你好',l2:'任何事也不会动摇',g:'c',c:'Eason'},
+{n:'不如不见',a:'陈奕迅',l:'不如不见 或者避免',l2:'一起倒退到感情最初那天',g:'c',c:'Eason'},
+{n:'吻别',a:'张学友',l:'前尘往事成云烟 消散在彼此眼前',l2:'总是要说再见 相聚又分离',g:'m',c:'歌神'},
+{n:'一路上有你',a:'张学友',l:'因为我一生只为你 怎么能够轻言放弃',l2:'一路上有你 苦一点也愿意',g:'m',c:'歌神'},
+{n:'饿狼传说',a:'张学友',l:'来让我跟你走 让我将心里一切全给你',l2:'来牵你的手',g:'c',c:'歌神'},
+{n:'每天爱你多一些',a:'张学友',l:'每天爱你多一些 每天思念多一点',l2:'我对你的爱是真的假不了',g:'c',c:'歌神'},
+{n:'月半小夜曲',a:'李克勤',l:'仍然倚在失眠夜 望天边星宿',l2:'仍然听见小提琴如泣似诉再挑逗',g:'c',c:'克勤'},
+{n:'红日',a:'李克勤',l:'命运就算颠沛流离 命运就算曲折离奇',l2:'命运就算恐吓着你 做人没趣味',g:'c',c:'克勤'},
+{n:'Monica',a:'张国荣',l:'Monica Monica Monica Monica',l2:'谁能代替你地位',g:'c',c:'哥哥'},
+{n:'风继续吹',a:'张国荣',l:'风继续吹 不忍远离',l2:'心里极渴望 希望留下伴着你',g:'c',c:'哥哥'},
+{n:'当年情',a:'张国荣',l:'将一切还给天地 心里有万语千言',l2:'也默默无言 当年情',g:'c',c:'哥哥'},
+{n:'千千阙歌',a:'陈慧娴',l:'来日纵使千千阙歌 飘于远方我路上',l2:'来日纵使千千晚星 亮过今晚月亮',g:'c',c:'粤语经典'},
+{n:'约定',a:'王菲',l:'还记得当天旅馆的门牌',l2:'还留住笑着离开的神态',g:'c',c:'天后'},
+{n:'暗涌',a:'王菲',l:'害怕悲剧重演 我的命中命中',l2:'越美丽的东西我越不可碰',g:'c',c:'天后'},
+{n:'红豆',a:'王菲',l:'还没好好地感受 雪花绽放的气候',l2:'等不到天黑 烟火不会太完美',g:'m',c:'天后'},
+{n:'偏偏喜欢你',a:'陈百强',l:'愿一生以爱交织 但见真诚也未必',l2:'偏偏喜欢你 你我有分歧',g:'c',c:'粤语经典'},
+{n:'沧海一声笑',a:'许冠杰',l:'沧海一声笑 滔滔两岸潮',l2:'浮沉随浪只记今朝',g:'c',c:'粤语经典'},
+{n:'男儿当自强',a:'林子祥',l:'傲气面对万重浪 热血像那红日光',l2:'胆似铁打 骨如精钢',g:'c',c:'粤语经典'},
+{n:'讲不出再见',a:'谭咏麟',l:'长在心里的歌 发觉已唱走了调',l2:'讲不出再见 只好默默地凝望',g:'c',c:'校长'},
+{n:'朋友',a:'谭咏麟',l:'繁星流动 和你同路 从不相识开始心接近',l2:'默默以真挚送给你',g:'c',c:'校长'},
+{n:'晴天',a:'周杰伦',l:'从前从前 有个人爱你很久',l2:'但偏偏风渐渐把距离吹得好远',g:'m',c:'周杰伦'},
+{n:'青花瓷',a:'周杰伦',l:'天青色等烟雨 而我在等你',l2:'月色被打捞起 晕开了结局',g:'m',c:'周杰伦'},
+{n:'稻香',a:'周杰伦',l:'所谓的那快乐 赤脚在田里追蜻蜓追到累了',l2:'偷摘水果被蜜蜂给叮到怕了',g:'m',c:'周杰伦'},
+{n:'告白气球',a:'周杰伦',l:'塞纳河畔 左岸的咖啡',l2:'亲爱的爱上你从那天起',g:'m',c:'周杰伦'},
+{n:'七里香',a:'周杰伦',l:'窗外的麻雀 在电线杆上多嘴',l2:'你说这一句很有夏天的感觉',g:'m',c:'周杰伦'},
+{n:'简单爱',a:'周杰伦',l:'说不上为什么 我变得很主动',l2:'想要送你回家的冲动',g:'m',c:'周杰伦'},
+{n:'平凡之路',a:'朴树',l:'我曾经跨过山和大海 也穿过人山人海',l2:'我曾经拥有着的一切转眼都飘散如烟',g:'m',c:'经典国语'},
+{n:'起风了',a:'买辣椒也用券',l:'我曾将青春翻涌成她 也曾指尖弹出盛夏',l2:'心之所动且就随缘去吧',g:'m',c:'网络热歌'},
+{n:'孤勇者',a:'陈奕迅',l:'爱你孤身走暗巷 爱你不跪的模样',l2:'爱你对峙过绝望不肯哭一场',g:'m',c:'游戏主题'},
+{n:'小幸运',a:'田馥甄',l:'我听见雨滴落在青青草地',l2:'我听见远方下课钟声响起',g:'m',c:'影视金曲'},
+{n:'后来',a:'刘若英',l:'后来我总算学会了如何去爱',l2:'可惜你早已远去消失在人海',g:'m',c:'经典国语'},
+{n:'大鱼',a:'周深',l:'海浪无声将夜幕深深淹没',l2:'漫过天空尽头的角落',g:'m',c:'动画金曲'},
+{n:'成都',a:'赵雷',l:'让我掉下眼泪的 不止昨夜的酒',l2:'让我依依不舍的不止你的温柔',g:'m',c:'民谣'},
+{n:'年少有为',a:'李荣浩',l:'假如我年少有为不自卑',l2:'懂得什么是珍贵',g:'m',c:'流行'},
+{n:'光年之外',a:'邓紫棋',l:'感受停在我发端的指尖',l2:'如何瞬间冻结时间',g:'m',c:'流行'},
+{n:'泡沫',a:'邓紫棋',l:'阳光下的泡沫 是彩色的',l2:'就像被骗的我是幸福的',g:'m',c:'流行'},
+{n:'可惜没如果',a:'林俊杰',l:'假如把犯得起的错 能错的都错过',l2:'应该还是会选择这样的过活',g:'m',c:'JJ'},
+{n:'那些年',a:'胡夏',l:'那些年错过的大雨 那些年错过的爱情',l2:'好想拥抱你拥抱错过的勇气',g:'m',c:'影视金曲'},
+];
+
+const WRITER_DB=[
+{n:'林夕',l:'得不到的永远在骚动 被偏爱的都有恃无恐',l2:'代表作：《红玫瑰》《K歌之王》《富士山下》',c:'词坛泰斗'},
+{n:'林夕',l:'我就是我 是颜色不一样的烟火',l2:'给张国荣写下无数经典',c:'词坛泰斗'},
+{n:'林夕',l:'还记得当天旅馆的门牌',l2:'为王菲写了《约定》《暗涌》',c:'词坛泰斗'},
+{n:'林夕',l:'你是千堆雪 我是长街',l2:'笔名来自"梦"字的拆解',c:'词坛泰斗'},
+{n:'林夕',l:'不如不见 或者避免',l2:'他与陈奕迅是黄金搭档',c:'词坛泰斗'},
+{n:'黄伟文',l:'余生请你指教 我不介意慢慢熬',l2:'笔名Wyman，代表作《浮夸》',c:'词坛鬼才'},
+{n:'黄伟文',l:'其实你知道 我无非想你好',l2:'《最佳损友》《无条件》词作者',c:'词坛鬼才'},
+{n:'黄伟文',l:'那年十八 母校舞会 站着如喽啰',l2:'用《浮夸》写尽小人物心声',c:'词坛鬼才'},
+{n:'黄伟文',l:'开始终结都由得你 可有可无你选什么',l2:'为容祖儿写了《心淡》',c:'词坛鬼才'},
+{n:'黄伟文',l:'闭起双眼你最挂念谁',l2:'代表作《喜帖街》《陀飞轮》',c:'词坛鬼才'},
+{n:'方文山',l:'天青色等烟雨 而我在等你',l2:'周杰伦御用词人，中国风大师',c:'词坛诗人'},
+{n:'方文山',l:'一盏离愁 孤单伫立在窗口',l2:'《东风破》开创中国风流行',c:'词坛诗人'},
+{n:'方文山',l:'窗外的麻雀 在电线杆上多嘴',l2:'写了《七里香》《晴天》',c:'词坛诗人'},
+{n:'方文山',l:'塞纳河畔 左岸的咖啡',l2:'与周杰伦合作20年',c:'词坛诗人'},
+{n:'方文山',l:'一群嗜血的蚂蚁 被腐肉所吸引',l2:'他的歌词像一幅幅画',c:'词坛诗人'},
+];
+
+// 称号系统
+const TITLES={
+  song:[['📻 音乐小白',0],['🎧 歌曲爱好者',.3],['🎵 金曲达人',.45],['🎶 行走的曲库',.6],['🎤 点歌机之王',.75],['👑 金曲百科全书',.85],['🏆 华语歌神',.95]],
+  artist:[['📻 路人粉',0],['🎧 追星族',.3],['🎵 粉丝头子',.45],['🔍 音乐侦探',.6],['📡 活体Shazam',.75],['👑 歌手鉴定师',.85],['🏆 歌坛活字典',.95]],
+  writer:[['📻 文字门外汉',0],['🎧 文学爱好者',.3],['🎵 诗词鉴赏家',.45],['✒️ 词坛知己',.6],['📝 林夕接班人',.75],['👑 词坛宗师',.85],['🏆 当代仓央嘉措',.95]],
+};
+
+let G={scr:'start',mode:'',qs:[],ci:0,sc:0,ok:0,no:0,cb:0,mcb:0,rv:0,at:0,done:false,tot:10,inp:'',timer:60,tid:null,tb:false};
+
+function shuf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]]}return b}
+function mask(t,p){const ch=[...t],mk=ch.map((c,i)=>({c,i,cjk:/[一-鿿]/.test(c)}));const cj=mk.filter(x=>x.cjk),hc=Math.max(0,0|cj.length*(1-p));const hs=new Set(shuf(cj).slice(0,hc).map(x=>x.i));return ch.map((c,i)=>{if(c===' ')return'<span class="ch ch-sp"> </span>';const cl=hs.has(i)?'ch-h':(p<1&&/[一-鿿]/.test(c)?'ch-r':'ch-v');return`<span class="ch ${cl}">${hs.has(i)?'　':c}</span>`;}).join('');}
+
+function pickMode(mode){G.mode=mode;G.scr='diff';draw();}
+
+function start(n){
+  G.tot=n;G.ci=0;G.sc=0;G.ok=0;G.no=0;G.cb=0;G.mcb=0;G.rv=0;G.at=0;G.done=false;G.inp='';G.timer=60;G.tb=false;
+  if(G.mode==='song'){G.qs=shuf(SONG_DB).slice(0,n);}
+  else if(G.mode==='artist'){G.qs=shuf(SONG_DB).slice(0,n);}
+  else{G.qs=shuf(WRITER_DB).slice(0,n);}
+  G.scr='play';startT();draw();
+}
+
+function startT(){clearInterval(G.tid);G.timer=60;G.tb=false;G.tid=setInterval(()=>{if(G.scr!=='play')return;G.timer--;updT();if(G.timer<=0){clearInterval(G.tid);giveUp();}},1000);}
+function updT(){const f=document.querySelector('.timer-fill');if(!f)return;const p=(G.timer/60)*100;f.style.width=p+'%';f.className='timer-fill '+(p>50?'timer-ok':p>20?'timer-warn':'timer-danger');}
+
+function getAns(q){return G.mode==='artist'?q.a:q.n;}
+function rvl(){if(G.rv<3){G.rv++;draw();}}
+function giveUp(){G.done=true;G.no++;G.cb=0;clearInterval(G.tid);G.scr='res';draw();}
+
+function sub(){
+  if(G.done||!G.inp.trim())return;const q=G.qs[G.ci],ans=getAns(q);
+  if(G.inp.trim()===ans){
+    G.done=true;G.ok++;G.cb++;if(G.cb>G.mcb)G.mcb=G.cb;
+    const base=[30,25,15,10][Math.min(G.rv,3)];const cbo=Math.min((G.cb-1)*5,20);
+    const tb=G.timer>=30?10:0;G.tb=tb>0;G.sc+=base+cbo+tb;
+    if(G.cb>=3)combo(G.cb);clearInterval(G.tid);G.scr='res';draw();
+  }else{G.at++;if(G.at>=3)giveUp();else{if(G.rv<3)G.rv++;wrongFx();draw();}}
+}
+
+function wrongFx(){setTimeout(()=>{document.querySelectorAll('.sl').forEach(s=>s.classList.add('no'));setTimeout(()=>document.querySelectorAll('.sl').forEach(s=>s.classList.remove('no')),400);},50);}
+function combo(n){const e=document.createElement('div');e.className='combo-pop';e.innerHTML=`<span style="color:var(--neon1)">${n}</span><span style="color:var(--neon3)">连击!</span>`;document.body.appendChild(e);setTimeout(()=>e.remove(),1300);}
+function nxt(){G.ci++;G.rv=0;G.at=0;G.done=false;G.inp='';if(G.ci>=G.qs.length){G.scr='end';clearInterval(G.tid);}else{G.scr='play';startT();}draw();}
+function share(){const t=getTitle();const x=`\u{1F3B5} 献歌词大挑战 \u{1F3B5}\n模式：${G.mode==='song'?'猜歌名':G.mode==='artist'?'猜歌手':'猜填词人'}\n称号：${t}\n得分：${G.sc} | 答对：${G.ok}/${G.tot}\n最高${G.mcb}连击！\n来挑战吧 \u{1F449}`;if(navigator.share)navigator.share({title:'猜歌词大挑战',text:x,url:location.href});else if(navigator.clipboard){navigator.clipboard.writeText(x+' '+location.href);alert('已复制！');}}
+
+function getTitle(){const p=G.ok/G.tot;const ts=TITLES[G.mode]||TITLES.song;for(let i=ts.length-1;i>=0;i--)if(p>=ts[i][1])return ts[i][0];return ts[0][0];}
+
+function onInp(e){G.inp=e.target.value;rSlots();}
+function rSlots(){const q=G.qs[G.ci];if(!q)return;const ans=getAns(q);const sl=document.querySelectorAll('.sl');const ch=[...G.inp];sl.forEach((s,i)=>{if(ch[i]){s.textContent=ch[i];s.className='sl f';}else{s.textContent='';s.className='sl';}});}
+
+function draw(){
+  const A=document.getElementById('app');
+  if(G.scr==='start'){
+    A.innerHTML=`<div class="hd"><div style="font-size:40px">\u{1F3B6}</div><div class="hd-t">猜歌词大挑战</div><div class="hd-s">粤语大师 \xB7 国语金曲 \xB7 填词大师</div></div>
+      <div class="ctr" style="justify-content:flex-start;padding-top:20px">
+        <div style="font-size:15px;color:rgba(255,255,255,0.45);margin-bottom:20px;line-height:1.8">选择你的挑战方向</div>
+        <div class="mode-cards">
+          <div class="mode-card mc-song" onclick="pickMode('song')">
+            <div class="mc-icon">\u{1F3B5}</div><div class="mc-title">猜歌名</div>
+            <div class="mc-desc">看歌词猜歌曲名称，从粴语经典到国语金曲</div>
+            <div class="mc-count">${SONG_DB.length}题</div>
+          </div>
+          <div class="mode-card mc-artist" onclick="pickMode('artist')">
+            <div class="mc-icon">\u{1F3A4}</div><div class="mc-title">猜歌手</div>
+            <div class="mc-desc">看歌词猜演唱歌手，你能认出谁的声音吗？</div>
+            <div class="mc-count">${SONG_DB.length}题</div>
+          </div>
+          <div class="mode-card mc-writer" onclick="pickMode('writer')">
+            <div class="mc-icon">✏️</div><div class="mc-title">猜填词人</div>
+            <div class="mc-desc">林夕、黄伟文、方文山…谁写了这句词？</div>
+            <div class="mc-count">${WRITER_DB.length}题</div>
+          </div>
+        </div>
+      </div>`;return;}
+
+  if(G.scr==='diff'){
+    const mx=G.mode==='writer'?WRITER_DB.length:SONG_DB.length;
+    const mLabel=G.mode==='song'?'\u{1F3B5} 猜歌名':G.mode==='artist'?'\u{1F3A4} 猜歌手':'✏️ 猜填词人';
+    const mColor=G.mode==='song'?'var(--neon2)':G.mode==='artist'?'var(--neon1)':'var(--neon4)';
+    A.innerHTML=`<div class="hd"><div class="hd-t" style="font-size:18px">猜歌词大挑战</div></div>
+      <div class="ctr">
+        <div style="font-size:48px;margin-bottom:12px">${G.mode==='song'?'\u{1F3B5}':G.mode==='artist'?'\u{1F3A4}':'✏️'}</div>
+        <div style="font-size:24px;font-weight:800;color:${mColor}">${mLabel}</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.4);margin-top:8px">60秒计时 \xB7 连击加分 \xB7 30秒内额外+10分</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.3);margin-top:4px">题库共 ${mx} 题</div>
+        <div class="diff-row" style="margin-top:24px;max-width:340px;width:100%">
+          <button class="diff" onclick="start(8)" style="border-color:rgba(255,255,255,0.12)">快速<br><small style="color:rgba(255,255,255,0.3)">8题</small></button>
+          <button class="diff a" onclick="start(${Math.min(15,mx)})" style="border-color:${mColor}40;background:${mColor}15">标准<br><small style="color:rgba(255,255,255,0.3)">${Math.min(15,mx)}题</small></button>
+          <button class="diff" onclick="start(${Math.min(25,mx)})" style="border-color:rgba(255,255,255,0.12)">挑战<br><small style="color:rgba(255,255,255,0.3)">${Math.min(25,mx)}题</small></button>
+        </div>
+        <button class="back" onclick="G.scr='start';draw()">← 返回选择</button>
+      </div>`;return;}
+
+  if(G.scr==='end'){const t=getTitle();
+    const mLabel=G.mode==='song'?'猜歌名':G.mode==='artist'?'猜歌手':'猜填词人';
+    A.innerHTML=`<div class="hd"><div class="hd-t" style="font-size:16px">猜歌词大挑战 \xB7 ${mLabel}</div></div>
+      <div class="ctr"><div class="tb">${t}</div><div class="fs">${G.sc}</div>
+        <div style="color:rgba(255,255,255,0.35);font-size:13px;line-height:2.2">
+          答对 <b style="color:var(--neon4)">${G.ok}</b>/${G.tot} \xB7 最高 <b style="color:#fbbf24">${G.mcb}</b> 连击<br>满分 ${G.tot*40}分</div>
+        <button class="nxt" onclick="start(${G.tot})" style="max-width:260px;margin-top:20px">再来一局</button>
+        <button class="sh" onclick="share()">\u{1F4E4} 分享战绩</button>
+        <button class="back" onclick="G.scr='start';draw()">← 换个模式</button>
+      </div>`;return;}
+
+  const q=G.qs[G.ci];if(!q)return;
+  const isR=G.scr==='res',ans=getAns(q),isOk=G.inp.trim()===ans;
+  const pct=[.3,.55,.8,1][Math.min(G.rv,3)];
+  const tl=G.mode==='artist'?'猜歌手':G.mode==='writer'?'猜填词人':'猜歌名';
+  const tc=G.mode==='artist'?'qb-artist':G.mode==='writer'?'qb-writer':'qb-song';
+  const lt=q.g==='c'?'<span class="lang-tag lt-c">粤语</span>':q.g==='m'?'<span class="lang-tag lt-m">国语</span>':'';
+  const nc=[...ans];
+
+  A.innerHTML=`
+    <div class="hd" style="padding:10px 0 6px"><div class="hd-t" style="font-size:15px">猜歌词大挑战</div></div>
+    <div class="bar">
+      <div class="bar-i"><div class="bar-l">题目</div><div class="bar-v c1">${G.ci+1}/${G.tot}</div></div>
+      <div class="bar-i"><div class="bar-l">得分</div><div class="bar-v c4">${G.sc}</div></div>
+      <div class="bar-i"><div class="bar-l">连击</div><div class="bar-v c3">${G.cb}</div></div>
+      <div class="bar-i"><div class="bar-l">计时</div><div class="bar-v c5">${isR?'--':G.timer+'s'}</div></div>
+    </div>
+    <div class="timer"><div class="timer-fill timer-ok" style="width:${isR?0:(G.timer/60)*100}%"></div></div>
+    <div class="card">
+      <div class="q-type"><span class="q-badge ${tc}">\u{1F3AF} ${tl}</span>${lt}</div>
+      ${isR?`
+        <div class="res">
+          <div class="res-ic">${isOk?'\u{1F389}':'\u{1F622}'}</div>
+          <div class="res-msg" style="color:${isOk?'var(--neon4)':'#f87171'}">${isOk?'答对了！':'很遗憾~'}</div>
+          <div class="res-name">${ans}</div>
+          <div class="res-det">${G.mode==='artist'?'歌曲：'+q.n:G.mode==='writer'?'填词人':'歌手：'+q.a}<br>${q.c}</div>
+          ${isOk?`<div class="res-pts">+${[30,25,15,10][Math.min(G.rv,3)]}${G.cb>1?' +'+Math.min((G.cb-1)*5,20)+'连击':''}${G.tb?' +10限时':''}分</div>`:''}
+        </div>
+        <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;text-align:center;margin:8px 0">
+          <div class="l-main" style="font-size:18px;color:var(--neon3)">"${q.l}"</div>
+          <div class="l-sub" style="font-size:13px;margin-top:6px">${q.l2}</div>
+        </div>
+        <button class="nxt" onclick="nxt()">${G.ci+1>=G.tot?'\u{1F3C1} 查看成绩':'\u{1F449} 下一题'}</button>
+      `:`
+        <div class="lyric-wrap">
+          <div class="lyric-box"><div class="l-main">${mask(q.l,pct)}</div></div>
+          ${G.rv>=1?`<div class="lyric-box" style="min-height:50px;padding:16px"><div class="l-sub" style="font-size:16px">${mask(q.l2,Math.max(0,pct-.3))}</div></div>`:''}
+          <div class="hints"><span class="hint">\u{1F3A4} ${q.c}</span>${G.rv>=2&&G.mode==='song'?`<span class="hint" style="color:var(--neon1)">\u{1F464} ${q.a}</span>`:''}${G.rv>=2&&G.mode==='artist'?`<span class="hint" style="color:var(--neon1)">\u{1F3B5} ${q.n}</span>`:''}<span class="hint">\u{1F4DD} ${nc.length}个字</span></div>
+        </div>
+        <div class="ans">
+          <div class="ans-label">✍️ 请输入${tl.slice(1)}（${nc.length}个字）\xB7 剩余${3-G.at}次机会</div>
+          <div class="slots">${nc.map(()=>'<div class="sl"></div>').join('')}</div>
+          <div class="inp-row">
+            <input class="inp" id="ip" type="text" maxlength="${nc.length+2}" placeholder="输入${tl.slice(1)}..." autocomplete="off" autofocus>
+            <button class="sub-btn" onclick="sub()">确认</button>
+          </div>
+          <div class="acts">
+            <button class="act" onclick="rvl()" ${G.rv>=3?'disabled':''}>\u{1F4A1} 揭示更多 (${[30,25,15,10][Math.min(G.rv+1,3)]}分)</button>
+            <button class="act" onclick="giveUp()" style="color:#f87171">\u{1F3F3}️ 不会了(看答案)</button>
+          </div>
+        </div>
+      `}
+    </div>`;
+  if(!isR){const ip=document.getElementById('ip');if(ip){ip.addEventListener('input',onInp);ip.addEventListener('keydown',e=>{if(e.key==='Enter')sub();});ip.focus();}}
+}
+
+(function(){const c=document.getElementById('ns');const s=['♪','♫','♬','♩','\u{1F3B5}','\u{1F3B6}','\u{1F3A4}','\u{1F3B8}'];for(let i=0;i<18;i++){const d=document.createElement('div');d.className='nt';d.textContent=s[0|Math.random()*s.length];d.style.left=Math.random()*100+'%';d.style.fontSize=(Math.random()*14+12)+'px';d.style.animationDuration=(Math.random()*25+18)+'s';d.style.animationDelay=(Math.random()*18)+'s';c.appendChild(d);}})();
+draw();
+</script>
+</body>
+</html>
