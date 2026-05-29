@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>猜歌词大挑战</title>
+<meta name="description" content="猜歌词大挑战 - 粤语大师·国语金曲·邓丽君·填词大师，来看看你是什么级别的音乐达人！">
+<meta property="og:title" content="猜歌词大挑战">
+<meta property="og:description" content="看歌词猜歌名，粤语·国语·日语经典全收录！你能拿多少分？">
+<meta property="og:type" content="website">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--accent1:#e91e8c;--accent2:#7c5cfc;--accent3:#0ea5e9;--accent4:#10b981;--bg1:#f8faff;--bg2:#ffffff;--card:#ffffff;--text:#1e293b;--text-sub:#64748b;--border:rgba(0,0,0,0.06)}
@@ -118,6 +122,34 @@ body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;backgr
 .back:hover{color:var(--text);background:#f1f5f9}
 .combo-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:52px;font-weight:900;pointer-events:none;animation:ca 1.2s ease forwards;z-index:100}
 @keyframes ca{0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-80%) scale(.7)}}
+
+/* 分享卡片 */
+.share-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;animation:sfo .3s ease}
+@keyframes sfo{from{opacity:0}to{opacity:1}}
+.share-card{width:320px;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:sfc .35s ease}
+@keyframes sfc{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.sc-header{background:linear-gradient(135deg,#7c5cfc,#e91e8c,#0ea5e9);padding:28px 24px 20px;text-align:center;color:#fff}
+.sc-emoji{font-size:42px;margin-bottom:6px}
+.sc-title{font-size:20px;font-weight:900;letter-spacing:2px}
+.sc-mode{font-size:12px;opacity:.85;margin-top:4px;letter-spacing:1px}
+.sc-body{background:#fff;padding:24px}
+.sc-score{text-align:center;margin-bottom:16px}
+.sc-score-num{font-size:56px;font-weight:900;background:linear-gradient(135deg,#e91e8c,#7c5cfc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.sc-score-label{font-size:12px;color:#94a3b8;margin-top:2px}
+.sc-badge{text-align:center;padding:8px 20px;background:linear-gradient(135deg,rgba(124,92,252,0.08),rgba(233,30,140,0.08));border-radius:50px;font-size:18px;font-weight:800;color:#7c5cfc;margin-bottom:16px;display:inline-block;width:100%}
+.sc-stats{display:flex;gap:8px;margin-bottom:16px}
+.sc-stat{flex:1;text-align:center;padding:10px 4px;background:#f8fafc;border-radius:12px}
+.sc-stat-v{font-size:20px;font-weight:800;color:#1e293b}
+.sc-stat-l{font-size:10px;color:#94a3b8;margin-top:2px}
+.sc-footer{text-align:center;padding:14px 24px 20px;background:#fff;border-top:1px solid rgba(0,0,0,0.04)}
+.sc-link{font-size:11px;color:#94a3b8;word-break:break-all;margin-bottom:8px}
+.sc-tip{font-size:12px;color:#7c5cfc;font-weight:600}
+.sc-actions{display:flex;gap:10px;padding:0 24px 20px;background:#fff}
+.sc-btn{flex:1;padding:12px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.sc-btn-copy{background:linear-gradient(135deg,#7c5cfc,#e91e8c);color:#fff}
+.sc-btn-copy:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(124,92,252,0.3)}
+.sc-btn-close{background:#f1f5f9;color:#64748b}
+.sc-btn-close:hover{background:#e2e8f0}
 </style>
 </head>
 <body>
@@ -266,7 +298,52 @@ function sub(){
 function wrongFx(){setTimeout(()=>{document.querySelectorAll('.sl').forEach(s=>s.classList.add('no'));setTimeout(()=>document.querySelectorAll('.sl').forEach(s=>s.classList.remove('no')),400);},50);}
 function combo(n){const e=document.createElement('div');e.className='combo-pop';e.innerHTML=`<span style="color:var(--accent1)">${n}</span><span style="color:var(--accent3)">连击!</span>`;document.body.appendChild(e);setTimeout(()=>e.remove(),1300);}
 function nxt(){G.ci++;G.rv=0;G.at=0;G.done=false;G.inp='';if(G.ci>=G.qs.length){G.scr='end';clearInterval(G.tid);}else{G.scr='play';startT();}draw();}
-function share(){const t=getTitle();const x=`\u{1F3B5} 献歌词大挑战 \u{1F3B5}\n模式：${G.mode==='song'?'猜歌名':G.mode==='artist'?'猜歌手':G.mode==='teresa'?'邓丽君专区':'猜填词人'}\n称号：${t}\n得分：${G.sc} | 答对：${G.ok}/${G.tot}\n最高${G.mcb}连击！\n来挑战吧 \u{1F449}`;if(navigator.share)navigator.share({title:'猜歌词大挑战',text:x,url:location.href});else if(navigator.clipboard){navigator.clipboard.writeText(x+' '+location.href);alert('已复制！');}}
+function share(){
+  const t=getTitle();
+  const mName=G.mode==='song'?'猜歌名':G.mode==='artist'?'猜歌手':G.mode==='teresa'?'邓丽君专区':'猜填词人';
+  const mEmoji=G.mode==='song'?'\u{1F3B5}':G.mode==='artist'?'\u{1F3A4}':G.mode==='teresa'?'\u{1F338}':'✏️';
+  const pct=G.tot?Math.round(G.ok/G.tot*100):0;
+  const stars=pct>=90?'⭐⭐⭐':pct>=60?'⭐⭐':pct>=30?'⭐':'';
+  const url=location.href;
+  const ov=document.createElement('div');
+  ov.className='share-overlay';
+  ov.onclick=function(e){if(e.target===ov)ov.remove();};
+  ov.innerHTML=`<div class="share-card">
+    <div class="sc-header">
+      <div class="sc-emoji">${mEmoji}</div>
+      <div class="sc-title">\u{1F3B6} 猜歌词大挑战</div>
+      <div class="sc-mode">${mName} \xB7 ${G.tot}题挑战</div>
+    </div>
+    <div class="sc-body">
+      <div class="sc-score">
+        <div class="sc-score-num">${G.sc}</div>
+        <div class="sc-score-label">最终得分 ${stars}</div>
+      </div>
+      <div class="sc-badge">${t}</div>
+      <div class="sc-stats">
+        <div class="sc-stat"><div class="sc-stat-v" style="color:#10b981">${G.ok}/${G.tot}</div><div class="sc-stat-l">答对</div></div>
+        <div class="sc-stat"><div class="sc-stat-v" style="color:#d97706">${G.mcb}</div><div class="sc-stat-l">最高连击</div></div>
+        <div class="sc-stat"><div class="sc-stat-v" style="color:#7c5cfc">${pct}%</div><div class="sc-stat-l">正确率</div></div>
+      </div>
+    </div>
+    <div class="sc-footer">
+      <div class="sc-link">\u{1F517} ${url}</div>
+      <div class="sc-tip">\u{1F4F1} 截图分享到朋友圈，邀请好友来挑战！</div>
+    </div>
+    <div class="sc-actions">
+      <button class="sc-btn sc-btn-copy" onclick="copyShare()">复制文案</button>
+      <button class="sc-btn sc-btn-close" onclick="this.closest('.share-overlay').remove()">关闭</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+}
+function copyShare(){
+  const t=getTitle();
+  const mName=G.mode==='song'?'猜歌名':G.mode==='artist'?'猜歌手':G.mode==='teresa'?'邓丽君专区':'猜填词人';
+  const pct=G.tot?Math.round(G.ok/G.tot*100):0;
+  const x=`\u{1F3B6} 猜歌词大挑战 \u{1F3B6}\n\n\u{1F3AF} 模式：${mName}\n\u{1F3C6} 称号：${t}\n\u{1F4AF} 得分：${G.sc}分\n✅ 答对：${G.ok}/${G.tot}（${pct}%）\n\u{1F525} 最高${G.mcb}连击！\n\n来挑战吧！你能超过我吗？\u{1F447}\n${location.href}`;
+  if(navigator.clipboard){navigator.clipboard.writeText(x).then(()=>{const b=document.querySelector('.sc-btn-copy');if(b){b.textContent='✅ 已复制！';b.style.background='#10b981';setTimeout(()=>{b.textContent='复制文案';b.style.background='';},2000);}});}
+}
 
 function getTitle(){const p=G.ok/G.tot;const ts=TITLES[G.mode]||TITLES.song;for(let i=ts.length-1;i>=0;i--)if(p>=ts[i][1])return ts[i][0];return ts[0][0];}
 
