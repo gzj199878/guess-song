@@ -6,110 +6,116 @@
 <title>猜歌词大挑战</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--neon1:#ff6ec7;--neon2:#7c5cfc;--neon3:#00d4ff;--neon4:#00ffaa;--bg1:#0d0221;--bg2:#150535;--card:rgba(255,255,255,0.05)}
-body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(160deg,var(--bg1),var(--bg2),#0a0520);min-height:100vh;color:#fff;overflow-x:hidden}
+:root{--accent1:#e91e8c;--accent2:#7c5cfc;--accent3:#0ea5e9;--accent4:#10b981;--bg1:#f8faff;--bg2:#ffffff;--card:#ffffff;--text:#1e293b;--text-sub:#64748b;--border:rgba(0,0,0,0.06)}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(160deg,#f0f4ff,#ffffff,#fdf2f8);min-height:100vh;color:var(--text);overflow-x:hidden}
 .app{max-width:540px;margin:0 auto;padding:14px;min-height:100vh;display:flex;flex-direction:column;position:relative;z-index:1}
 .glow{position:fixed;pointer-events:none;z-index:0}
-.g1{top:-10%;left:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(255,110,199,0.12),transparent 70%);border-radius:50%}
-.g2{bottom:-10%;right:-10%;width:45vw;height:45vw;background:radial-gradient(circle,rgba(0,212,255,0.1),transparent 70%);border-radius:50%}
+.g1{top:-10%;left:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(124,92,252,0.06),transparent 70%);border-radius:50%}
+.g2{bottom:-10%;right:-10%;width:45vw;height:45vw;background:radial-gradient(circle,rgba(14,165,233,0.05),transparent 70%);border-radius:50%}
 .notes{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.nt{position:absolute;opacity:.1;animation:fl linear infinite}
-@keyframes fl{0%{transform:translateY(105vh) rotate(0);opacity:0}8%{opacity:.1}92%{opacity:.1}100%{transform:translateY(-5vh) rotate(360deg);opacity:0}}
+.nt{position:absolute;opacity:.12;color:var(--accent2);animation:fl linear infinite}
+@keyframes fl{0%{transform:translateY(105vh) rotate(0);opacity:0}8%{opacity:.12}92%{opacity:.12}100%{transform:translateY(-5vh) rotate(360deg);opacity:0}}
 .hd{text-align:center;padding:16px 0 10px}
-.hd-t{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--neon1),var(--neon2),var(--neon3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hd-s{font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:4px;margin-top:2px}
+.hd-t{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd-s{font-size:11px;color:var(--text-sub);letter-spacing:4px;margin-top:2px}
 
-/* 模式选择卡片 */
+/* Mode cards */
 .mode-cards{display:flex;flex-direction:column;gap:14px;margin-top:20px;width:100%}
-.mode-card{padding:20px;border-radius:18px;cursor:pointer;transition:all .3s;border:1.5px solid rgba(255,255,255,0.08);position:relative;overflow:hidden}
+.mode-card{padding:20px;border-radius:18px;cursor:pointer;transition:all .3s;border:1.5px solid rgba(0,0,0,0.06);position:relative;overflow:hidden;background:#fff}
 .mode-card:hover{transform:translateY(-3px)}
-.mode-card::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;border-radius:0 0 0 120px;opacity:.08}
-.mc-song{background:linear-gradient(135deg,rgba(124,92,252,0.12),rgba(0,212,255,0.08))}
-.mc-song:hover{border-color:rgba(124,92,252,0.4);box-shadow:0 8px 30px rgba(124,92,252,0.15)}
-.mc-song::before{background:var(--neon2)}
-.mc-artist{background:linear-gradient(135deg,rgba(255,110,199,0.12),rgba(251,191,36,0.08))}
-.mc-artist:hover{border-color:rgba(255,110,199,0.4);box-shadow:0 8px 30px rgba(255,110,199,0.15)}
-.mc-artist::before{background:var(--neon1)}
-.mc-writer{background:linear-gradient(135deg,rgba(0,255,170,0.12),rgba(0,212,255,0.08))}
-.mc-writer:hover{border-color:rgba(0,255,170,0.4);box-shadow:0 8px 30px rgba(0,255,170,0.15)}
-.mc-writer::before{background:var(--neon4)}
+.mode-card::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;border-radius:0 0 0 120px;opacity:.06}
+.mc-song{background:linear-gradient(135deg,rgba(124,92,252,0.05),rgba(14,165,233,0.03));border-color:rgba(124,92,252,0.15)}
+.mc-song:hover{border-color:rgba(124,92,252,0.4);box-shadow:0 8px 30px rgba(124,92,252,0.12)}
+.mc-song::before{background:var(--accent2)}
+.mc-artist{background:linear-gradient(135deg,rgba(233,30,140,0.05),rgba(251,191,36,0.03));border-color:rgba(233,30,140,0.15)}
+.mc-artist:hover{border-color:rgba(233,30,140,0.4);box-shadow:0 8px 30px rgba(233,30,140,0.12)}
+.mc-artist::before{background:var(--accent1)}
+.mc-writer{background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(14,165,233,0.03));border-color:rgba(16,185,129,0.15)}
+.mc-writer:hover{border-color:rgba(16,185,129,0.4);box-shadow:0 8px 30px rgba(16,185,129,0.12)}
+.mc-writer::before{background:var(--accent4)}
+.mc-teresa{background:linear-gradient(135deg,rgba(255,183,197,0.08),rgba(255,215,0,0.03));border-color:rgba(255,143,177,0.2)}
+.mc-teresa:hover{border-color:rgba(255,143,177,0.5);box-shadow:0 8px 30px rgba(255,143,177,0.12)}
+.mc-teresa::before{background:#ff8fb1}
 .mc-icon{font-size:32px;margin-bottom:6px}
 .mc-title{font-size:18px;font-weight:800;margin-bottom:4px}
-.mc-desc{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6}
+.mc-desc{font-size:12px;color:var(--text-sub);line-height:1.6}
 .mc-count{position:absolute;top:16px;right:16px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-.mc-song .mc-title{color:#c4b5fd}.mc-song .mc-count{background:rgba(124,92,252,0.15);color:#c4b5fd}
-.mc-artist .mc-title{color:#fbbf24}.mc-artist .mc-count{background:rgba(255,110,199,0.15);color:var(--neon1)}
-.mc-writer .mc-title{color:var(--neon4)}.mc-writer .mc-count{background:rgba(0,255,170,0.15);color:var(--neon4)}
+.mc-song .mc-title{color:var(--accent2)}.mc-song .mc-count{background:rgba(124,92,252,0.1);color:var(--accent2)}
+.mc-artist .mc-title{color:var(--accent1)}.mc-artist .mc-count{background:rgba(233,30,140,0.1);color:var(--accent1)}
+.mc-writer .mc-title{color:var(--accent4)}.mc-writer .mc-count{background:rgba(16,185,129,0.1);color:var(--accent4)}
+.mc-teresa .mc-title{color:#e91e8c}.mc-teresa .mc-count{background:rgba(255,143,177,0.12);color:#e91e8c}
 
-/* 难度选择 */
+/* Difficulty */
 .diff-row{display:flex;gap:8px;margin-top:14px}
-.diff{flex:1;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s}
-.diff:hover,.diff.a{color:#fff}
+.diff{flex:1;padding:10px;background:#f8fafc;border:1px solid rgba(0,0,0,0.08);border-radius:12px;color:var(--text-sub);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s}
+.diff:hover,.diff.a{color:var(--text);background:#fff;box-shadow:0 2px 12px rgba(124,92,252,0.1)}
 
-/* 信息栏/计时器/卡片等复用V3样式 */
+/* Bar/Timer/Card */
 .bar{display:flex;gap:6px;margin-bottom:12px}
-.bar-i{flex:1;text-align:center;padding:8px 2px;background:var(--card);border-radius:12px;border:1px solid rgba(255,255,255,0.05)}
-.bar-l{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px}
+.bar-i{flex:1;text-align:center;padding:8px 2px;background:#f8fafc;border-radius:12px;border:1px solid rgba(0,0,0,0.05)}
+.bar-l{font-size:9px;color:var(--text-sub);text-transform:uppercase;letter-spacing:1px}
 .bar-v{font-size:18px;font-weight:800;margin-top:1px}
-.c1{color:var(--neon1)}.c3{color:var(--neon4)}.c4{color:#fbbf24}.c5{color:#f87171}
-.timer{height:3px;background:rgba(255,255,255,0.06);border-radius:10px;margin-bottom:16px;overflow:hidden}
+.c1{color:var(--accent1)}.c3{color:var(--accent4)}.c4{color:#d97706}.c5{color:#ef4444}
+.timer{height:3px;background:rgba(0,0,0,0.06);border-radius:10px;margin-bottom:16px;overflow:hidden}
 .timer-fill{height:100%;border-radius:10px;transition:width 1s linear}
-.timer-ok{background:linear-gradient(90deg,var(--neon4),var(--neon3))}.timer-warn{background:linear-gradient(90deg,#fbbf24,var(--neon1))}.timer-danger{background:linear-gradient(90deg,#f87171,#ff6ec7)}
-.card{background:var(--card);backdrop-filter:blur(20px);border-radius:20px;padding:20px;border:1px solid rgba(255,255,255,0.06);flex:1;display:flex;flex-direction:column;animation:fu .3s ease}
+.timer-ok{background:linear-gradient(90deg,var(--accent4),var(--accent3))}.timer-warn{background:linear-gradient(90deg,#f59e0b,var(--accent1))}.timer-danger{background:linear-gradient(90deg,#ef4444,#e91e8c)}
+.card{background:var(--card);border-radius:20px;padding:20px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 24px rgba(0,0,0,0.04);flex:1;display:flex;flex-direction:column;animation:fu .3s ease}
 @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .q-type{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
 .q-badge{padding:6px 20px;border-radius:50px;font-size:14px;font-weight:800;letter-spacing:2px}
-.qb-song{background:linear-gradient(135deg,rgba(124,92,252,0.3),rgba(0,212,255,0.3));border:1px solid rgba(124,92,252,0.4);color:#c4b5fd}
-.qb-artist{background:linear-gradient(135deg,rgba(255,110,199,0.3),rgba(251,191,36,0.3));border:1px solid rgba(255,110,199,0.4);color:#fbbf24}
-.qb-writer{background:linear-gradient(135deg,rgba(0,255,170,0.3),rgba(0,212,255,0.3));border:1px solid rgba(0,255,170,0.4);color:var(--neon4)}
+.qb-song{background:linear-gradient(135deg,rgba(124,92,252,0.12),rgba(14,165,233,0.12));border:1px solid rgba(124,92,252,0.25);color:var(--accent2)}
+.qb-artist{background:linear-gradient(135deg,rgba(233,30,140,0.12),rgba(251,191,36,0.12));border:1px solid rgba(233,30,140,0.25);color:var(--accent1)}
+.qb-writer{background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(14,165,233,0.12));border:1px solid rgba(16,185,129,0.25);color:var(--accent4)}
+.qb-teresa{background:linear-gradient(135deg,rgba(255,143,177,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,143,177,0.3);color:#e91e8c}
 .lang-tag{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.lt-c{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.2)}
-.lt-m{background:rgba(0,255,170,0.15);color:var(--neon4);border:1px solid rgba(0,255,170,0.2)}
+.lt-c{background:rgba(217,119,6,0.1);color:#d97706;border:1px solid rgba(217,119,6,0.2)}
+.lt-m{background:rgba(16,185,129,0.1);color:var(--accent4);border:1px solid rgba(16,185,129,0.2)}
+.lt-j{background:rgba(233,30,140,0.08);color:#e91e8c;border:1px solid rgba(233,30,140,0.15)}
 .lyric-wrap{margin-bottom:16px;flex:1}
-.lyric-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:28px 16px;text-align:center;margin-bottom:10px;position:relative;overflow:hidden}
-.lyric-box::before{content:'♪';position:absolute;top:8px;left:12px;font-size:14px;opacity:.08}
-.lyric-box::after{content:'♫';position:absolute;bottom:8px;right:12px;font-size:14px;opacity:.08}
-.l-main{font-size:28px;line-height:1.9;letter-spacing:3px;font-weight:600}
-.l-sub{font-size:18px;line-height:1.8;letter-spacing:2px;font-weight:400;color:rgba(255,255,255,0.45)}
+.lyric-box{background:#f8fafc;border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:28px 16px;text-align:center;margin-bottom:10px;position:relative;overflow:hidden}
+.lyric-box::before{content:'♪';position:absolute;top:8px;left:12px;font-size:14px;opacity:.15;color:var(--accent2)}
+.lyric-box::after{content:'♫';position:absolute;bottom:8px;right:12px;font-size:14px;opacity:.15;color:var(--accent1)}
+.l-main{font-size:28px;line-height:1.9;letter-spacing:3px;font-weight:600;color:var(--text)}
+.l-sub{font-size:18px;line-height:1.8;letter-spacing:2px;font-weight:400;color:var(--text-sub)}
 .ch{display:inline-block;transition:all .3s}
-.ch-v{color:#f0f0f0}.ch-sp{min-width:.5em}
-.ch-h{color:transparent;background:linear-gradient(135deg,rgba(255,110,199,0.25),rgba(124,92,252,0.25));border-radius:4px;margin:0 1px;min-width:1.3em;border-bottom:2.5px solid rgba(255,110,199,0.5)}
-.ch-r{color:var(--neon3);animation:cr .4s}
-@keyframes cr{from{transform:scale(1.4);color:var(--neon1)}to{transform:scale(1);color:var(--neon3)}}
+.ch-v{color:var(--text)}.ch-sp{min-width:.5em}
+.ch-h{color:transparent;background:linear-gradient(135deg,rgba(233,30,140,0.12),rgba(124,92,252,0.12));border-radius:4px;margin:0 1px;min-width:1.3em;border-bottom:2.5px solid rgba(124,92,252,0.4)}
+.ch-r{color:var(--accent2);animation:cr .4s}
+@keyframes cr{from{transform:scale(1.4);color:var(--accent1)}to{transform:scale(1);color:var(--accent2)}}
 .hints{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
-.hint{padding:4px 12px;background:rgba(124,92,252,0.1);border-radius:20px;font-size:11px;color:#c4b5fd;border:1px solid rgba(124,92,252,0.15)}
+.hint{padding:4px 12px;background:rgba(124,92,252,0.08);border-radius:20px;font-size:11px;color:var(--accent2);border:1px solid rgba(124,92,252,0.12)}
 .ans{margin-top:auto}
-.ans-label{font-size:12px;font-weight:600;color:rgba(255,255,255,0.45);letter-spacing:1px;margin-bottom:8px;text-align:center}
+.ans-label{font-size:12px;font-weight:600;color:var(--text-sub);letter-spacing:1px;margin-bottom:8px;text-align:center}
 .slots{display:flex;gap:6px;justify-content:center;margin-bottom:14px}
-.sl{width:44px;height:52px;border-radius:12px;background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;transition:all .2s}
-.sl.f{border-color:rgba(124,92,252,0.5);background:rgba(124,92,252,0.1);color:#c4b5fd;box-shadow:0 0 12px rgba(124,92,252,0.15)}
-.sl.no{border-color:#f87171;background:rgba(248,113,113,0.1);color:#f87171;animation:sk .4s}
+.sl{width:44px;height:52px;border-radius:12px;background:#f8fafc;border:2px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:var(--text);transition:all .2s}
+.sl.f{border-color:rgba(124,92,252,0.5);background:rgba(124,92,252,0.06);color:var(--accent2);box-shadow:0 0 12px rgba(124,92,252,0.1)}
+.sl.no{border-color:#ef4444;background:rgba(239,68,68,0.06);color:#ef4444;animation:sk .4s}
 @keyframes sk{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .inp-row{display:flex;gap:8px}
-.inp{flex:1;padding:14px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;color:#fff;font-size:18px;font-weight:600;outline:none;text-align:center;letter-spacing:3px;transition:all .2s}
-.inp:focus{border-color:rgba(124,92,252,0.6);box-shadow:0 0 20px rgba(124,92,252,0.15)}
-.inp::placeholder{color:rgba(255,255,255,0.15);font-weight:400;letter-spacing:1px}
-.sub-btn{padding:14px 28px;background:linear-gradient(135deg,var(--neon2),var(--neon1));border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
-.sub-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(255,110,199,0.3)}
+.inp{flex:1;padding:14px;background:#f8fafc;border:1.5px solid rgba(0,0,0,0.1);border-radius:14px;color:var(--text);font-size:18px;font-weight:600;outline:none;text-align:center;letter-spacing:3px;transition:all .2s}
+.inp:focus{border-color:rgba(124,92,252,0.5);box-shadow:0 0 20px rgba(124,92,252,0.08)}
+.inp::placeholder{color:rgba(0,0,0,0.2);font-weight:400;letter-spacing:1px}
+.sub-btn{padding:14px 28px;background:linear-gradient(135deg,var(--accent2),var(--accent1));border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.sub-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(124,92,252,0.25)}
 .acts{display:flex;gap:8px;margin-top:10px}
-.act{flex:1;padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:rgba(255,255,255,0.4);font-size:12px;cursor:pointer;transition:all .2s;text-align:center}
-.act:hover{background:rgba(255,255,255,0.08);color:#fff}
+.act{flex:1;padding:10px;background:#f8fafc;border:1px solid rgba(0,0,0,0.06);border-radius:10px;color:var(--text-sub);font-size:12px;cursor:pointer;transition:all .2s;text-align:center}
+.act:hover{background:#f1f5f9;color:var(--text)}
 .act:disabled{opacity:.25;cursor:not-allowed}
 .res{text-align:center;padding:16px 0;animation:fu .35s}
 .res-ic{font-size:52px;margin-bottom:6px}
 .res-msg{font-size:17px;font-weight:700}
-.res-name{font-size:30px;font-weight:900;margin:6px 0;background:linear-gradient(135deg,var(--neon1),var(--neon2),var(--neon3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.res-det{font-size:13px;color:rgba(255,255,255,0.35);line-height:1.8}
-.res-pts{display:inline-block;padding:5px 16px;background:linear-gradient(135deg,rgba(0,255,170,0.15),rgba(0,212,255,0.15));border-radius:20px;color:var(--neon4);font-size:14px;font-weight:700;margin-top:8px;border:1px solid rgba(0,255,170,0.2)}
-.nxt{width:100%;padding:16px;background:linear-gradient(135deg,var(--neon2),var(--neon1));border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:14px;letter-spacing:1px;transition:all .2s}
-.nxt:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,110,199,0.3)}
+.res-name{font-size:30px;font-weight:900;margin:6px 0;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.res-det{font-size:13px;color:var(--text-sub);line-height:1.8}
+.res-pts{display:inline-block;padding:5px 16px;background:rgba(16,185,129,0.08);border-radius:20px;color:var(--accent4);font-size:14px;font-weight:700;margin-top:8px;border:1px solid rgba(16,185,129,0.2)}
+.nxt{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent2),var(--accent1));border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:14px;letter-spacing:1px;transition:all .2s}
+.nxt:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,92,252,0.2)}
 .ctr{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.fs{font-size:72px;font-weight:900;background:linear-gradient(135deg,var(--neon1),var(--neon2),var(--neon3),var(--neon4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0}
-.tb{display:inline-block;padding:10px 28px;background:linear-gradient(135deg,rgba(255,110,199,0.15),rgba(124,92,252,0.15));border:1.5px solid rgba(255,110,199,0.3);border-radius:50px;font-size:22px;font-weight:800;color:var(--neon1);margin:8px 0;letter-spacing:3px;text-shadow:0 0 20px rgba(255,110,199,0.3)}
-.sh{padding:12px 40px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:50px;color:#fff;font-size:14px;cursor:pointer;margin-top:12px;transition:all .2s}
-.sh:hover{background:rgba(255,255,255,0.12)}
-.back{padding:8px 20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:50px;color:rgba(255,255,255,0.5);font-size:13px;cursor:pointer;margin-top:12px;transition:all .2s}
-.back:hover{color:#fff;background:rgba(255,255,255,0.1)}
+.fs{font-size:72px;font-weight:900;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0}
+.tb{display:inline-block;padding:10px 28px;background:linear-gradient(135deg,rgba(233,30,140,0.08),rgba(124,92,252,0.08));border:1.5px solid rgba(124,92,252,0.25);border-radius:50px;font-size:22px;font-weight:800;color:var(--accent2);margin:8px 0;letter-spacing:3px}
+.sh{padding:12px 40px;background:#f8fafc;border:1px solid rgba(0,0,0,0.08);border-radius:50px;color:var(--text);font-size:14px;cursor:pointer;margin-top:12px;transition:all .2s}
+.sh:hover{background:#f1f5f9;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.back{padding:8px 20px;background:#f8fafc;border:1px solid rgba(0,0,0,0.08);border-radius:50px;color:var(--text-sub);font-size:13px;cursor:pointer;margin-top:12px;transition:all .2s}
+.back:hover{color:var(--text);background:#f1f5f9}
 .combo-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:52px;font-weight:900;pointer-events:none;animation:ca 1.2s ease forwards;z-index:100}
 @keyframes ca{0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-80%) scale(.7)}}
 </style>
@@ -174,6 +180,30 @@ const SONG_DB=[
 {n:'那些年',a:'胡夏',l:'那些年错过的大雨 那些年错过的爱情',l2:'好想拥抱你拥抱错过的勇气',g:'m',c:'影视金曲'},
 ];
 
+const TERESA_DB=[
+// 国语经典
+{n:'月亮代表我的心',a:'邓丽君',l:'你问我爱你有多深 我爱你有几分',l2:'我的情也真 我的爱也真 月亮代表我的心',g:'m',c:'邓丽君·国语'},
+{n:'甜蜜蜜',a:'邓丽君',l:'甜蜜蜜 你笑得甜蜜蜜',l2:'好像花儿开在春风里',g:'m',c:'邓丽君·国语'},
+{n:'小城故事',a:'邓丽君',l:'小城故事多 充满喜和乐',l2:'若是你到小城来 收获特别多',g:'m',c:'邓丽君·国语'},
+{n:'我只在乎你',a:'邓丽君',l:'如果没有遇见你 我将会是在哪里',l2:'人生几何 能够得到知己',g:'m',c:'邓丽君·国语'},
+{n:'又见炊烟',a:'邓丽君',l:'又见炊烟升起 暮色照大地',l2:'想问阵阵炊烟 你要去哪里',g:'m',c:'邓丽君·国语'},
+{n:'但愿人长久',a:'邓丽君',l:'明月几时有 把酒问青天',l2:'但愿人长久 千里共婵娟',g:'m',c:'邓丽君·国语'},
+{n:'在水一方',a:'邓丽君',l:'绿草苍苍 白雾茫茫',l2:'有位佳人 在水一方',g:'m',c:'邓丽君·国语'},
+{n:'何日君再来',a:'邓丽君',l:'好花不常开 好景不常在',l2:'今宵离别后 何日君再来',g:'m',c:'邓丽君·国语'},
+{n:'夜来香',a:'邓丽君',l:'那南风吹来清凉 那夜莺啼声细唱',l2:'月下的花儿都入梦',g:'m',c:'邓丽君·国语'},
+{n:'你怎么说',a:'邓丽君',l:'我没忘记你 你忘记我',l2:'你心里到底有没有我',g:'m',c:'邓丽君·国语'},
+{n:'独上西楼',a:'邓丽君',l:'无言独上西楼 月如钩',l2:'剪不断理还乱 是离愁',g:'m',c:'邓丽君·国语'},
+{n:'虞美人',a:'邓丽君',l:'春花秋月何时了 往事知多少',l2:'小楼昨夜又东风 故国不堪回首月明中',g:'m',c:'邓丽君·国语'},
+{n:'千言万语',a:'邓丽君',l:'不知道为了什么 忧愁它围绕着我',l2:'我每天都在祈祷 快赶走爱的寂寞',g:'m',c:'邓丽君·国语'},
+// 粤语经典
+{n:'漫步人生路',a:'邓丽君',l:'在你身边路虽远未疲倦',l2:'伴你漫行一段接一段',g:'c',c:'邓丽君·粤语'},
+{n:'忘记他',a:'邓丽君',l:'忘记他 等于忘掉了一切',l2:'让往事随风 以后莫再提',g:'c',c:'邓丽君·粤语'},
+// 日语经典（答案为中文通用译名）
+{n:'偿还',a:'邓丽君',l:'もしもあの時 出逢わなければ',l2:'こんなに悲しい想いはしない',g:'j',c:'邓丽君·日语'},
+{n:'任时光飞逝',a:'邓丽君',l:'もしもあなたと逢えずにいたら',l2:'私は何をしてたでしょう',g:'j',c:'邓丽君·日语'},
+{n:'爱人',a:'邓丽君',l:'忘れないで あなたのことだけ',l2:'見つめているから',g:'j',c:'邓丽君·日语'},
+];
+
 const WRITER_DB=[
 {n:'林夕',l:'得不到的永远在骚动 被偏爱的都有恃无恐',l2:'代表作：《红玫瑰》《K歌之王》《富士山下》',c:'词坛泰斗'},
 {n:'林夕',l:'我就是我 是颜色不一样的烟火',l2:'给张国荣写下无数经典',c:'词坛泰斗'},
@@ -197,12 +227,13 @@ const TITLES={
   song:[['📻 音乐小白',0],['🎧 歌曲爱好者',.3],['🎵 金曲达人',.45],['🎶 行走的曲库',.6],['🎤 点歌机之王',.75],['👑 金曲百科全书',.85],['🏆 华语歌神',.95]],
   artist:[['📻 路人粉',0],['🎧 追星族',.3],['🎵 粉丝头子',.45],['🔍 音乐侦探',.6],['📡 活体Shazam',.75],['👑 歌手鉴定师',.85],['🏆 歌坛活字典',.95]],
   writer:[['📻 文字门外汉',0],['🎧 文学爱好者',.3],['🎵 诗词鉴赏家',.45],['✒️ 词坛知己',.6],['📝 林夕接班人',.75],['👑 词坛宗师',.85],['🏆 当代仓央嘉措',.95]],
+  teresa:[['📻 路人听众',0],['🎧 丽君粉丝',.3],['🎵 知音人',.45],['🎶 永远的歌迷',.6],['🎤 十亿掌声',.75],['👑 丽君知己',.85],['🏆 邓丽君百科全书',.95]],
 };
 
 let G={scr:'start',mode:'',qs:[],ci:0,sc:0,ok:0,no:0,cb:0,mcb:0,rv:0,at:0,done:false,tot:10,inp:'',timer:60,tid:null,tb:false};
 
 function shuf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]]}return b}
-function mask(t,p){const ch=[...t],mk=ch.map((c,i)=>({c,i,cjk:/[一-鿿]/.test(c)}));const cj=mk.filter(x=>x.cjk),hc=Math.max(0,0|cj.length*(1-p));const hs=new Set(shuf(cj).slice(0,hc).map(x=>x.i));return ch.map((c,i)=>{if(c===' ')return'<span class="ch ch-sp"> </span>';const cl=hs.has(i)?'ch-h':(p<1&&/[一-鿿]/.test(c)?'ch-r':'ch-v');return`<span class="ch ${cl}">${hs.has(i)?'　':c}</span>`;}).join('');}
+function mask(t,p){const ch=[...t],mk=ch.map((c,i)=>({c,i,cjk:/[぀-ヿ一-鿿]/.test(c)}));const cj=mk.filter(x=>x.cjk),hc=Math.max(0,0|cj.length*(1-p));const hs=new Set(shuf(cj).slice(0,hc).map(x=>x.i));return ch.map((c,i)=>{if(c===' ')return'<span class="ch ch-sp"> </span>';const cl=hs.has(i)?'ch-h':(p<1&&/[぀-ヿ一-鿿]/.test(c)?'ch-r':'ch-v');return`<span class="ch ${cl}">${hs.has(i)?'　':c}</span>`;}).join('');}
 
 function pickMode(mode){G.mode=mode;G.scr='diff';draw();}
 
@@ -210,6 +241,7 @@ function start(n){
   G.tot=n;G.ci=0;G.sc=0;G.ok=0;G.no=0;G.cb=0;G.mcb=0;G.rv=0;G.at=0;G.done=false;G.inp='';G.timer=60;G.tb=false;
   if(G.mode==='song'){G.qs=shuf(SONG_DB).slice(0,n);}
   else if(G.mode==='artist'){G.qs=shuf(SONG_DB).slice(0,n);}
+  else if(G.mode==='teresa'){G.qs=shuf(TERESA_DB).slice(0,n);}
   else{G.qs=shuf(WRITER_DB).slice(0,n);}
   G.scr='play';startT();draw();
 }
@@ -232,9 +264,9 @@ function sub(){
 }
 
 function wrongFx(){setTimeout(()=>{document.querySelectorAll('.sl').forEach(s=>s.classList.add('no'));setTimeout(()=>document.querySelectorAll('.sl').forEach(s=>s.classList.remove('no')),400);},50);}
-function combo(n){const e=document.createElement('div');e.className='combo-pop';e.innerHTML=`<span style="color:var(--neon1)">${n}</span><span style="color:var(--neon3)">连击!</span>`;document.body.appendChild(e);setTimeout(()=>e.remove(),1300);}
+function combo(n){const e=document.createElement('div');e.className='combo-pop';e.innerHTML=`<span style="color:var(--accent1)">${n}</span><span style="color:var(--accent3)">连击!</span>`;document.body.appendChild(e);setTimeout(()=>e.remove(),1300);}
 function nxt(){G.ci++;G.rv=0;G.at=0;G.done=false;G.inp='';if(G.ci>=G.qs.length){G.scr='end';clearInterval(G.tid);}else{G.scr='play';startT();}draw();}
-function share(){const t=getTitle();const x=`\u{1F3B5} 献歌词大挑战 \u{1F3B5}\n模式：${G.mode==='song'?'猜歌名':G.mode==='artist'?'猜歌手':'猜填词人'}\n称号：${t}\n得分：${G.sc} | 答对：${G.ok}/${G.tot}\n最高${G.mcb}连击！\n来挑战吧 \u{1F449}`;if(navigator.share)navigator.share({title:'猜歌词大挑战',text:x,url:location.href});else if(navigator.clipboard){navigator.clipboard.writeText(x+' '+location.href);alert('已复制！');}}
+function share(){const t=getTitle();const x=`\u{1F3B5} 献歌词大挑战 \u{1F3B5}\n模式：${G.mode==='song'?'猜歌名':G.mode==='artist'?'猜歌手':G.mode==='teresa'?'邓丽君专区':'猜填词人'}\n称号：${t}\n得分：${G.sc} | 答对：${G.ok}/${G.tot}\n最高${G.mcb}连击！\n来挑战吧 \u{1F449}`;if(navigator.share)navigator.share({title:'猜歌词大挑战',text:x,url:location.href});else if(navigator.clipboard){navigator.clipboard.writeText(x+' '+location.href);alert('已复制！');}}
 
 function getTitle(){const p=G.ok/G.tot;const ts=TITLES[G.mode]||TITLES.song;for(let i=ts.length-1;i>=0;i--)if(p>=ts[i][1])return ts[i][0];return ts[0][0];}
 
@@ -244,9 +276,9 @@ function rSlots(){const q=G.qs[G.ci];if(!q)return;const ans=getAns(q);const sl=d
 function draw(){
   const A=document.getElementById('app');
   if(G.scr==='start'){
-    A.innerHTML=`<div class="hd"><div style="font-size:40px">\u{1F3B6}</div><div class="hd-t">猜歌词大挑战</div><div class="hd-s">粤语大师 \xB7 国语金曲 \xB7 填词大师</div></div>
+    A.innerHTML=`<div class="hd"><div style="font-size:40px">\u{1F3B6}</div><div class="hd-t">猜歌词大挑战</div><div class="hd-s">粤语大师 \xB7 国语金曲 \xB7 邓丽君 \xB7 填词大师</div></div>
       <div class="ctr" style="justify-content:flex-start;padding-top:20px">
-        <div style="font-size:15px;color:rgba(255,255,255,0.45);margin-bottom:20px;line-height:1.8">选择你的挑战方向</div>
+        <div style="font-size:15px;color:var(--text-sub);margin-bottom:20px;line-height:1.8">选择你的挑战方向</div>
         <div class="mode-cards">
           <div class="mode-card mc-song" onclick="pickMode('song')">
             <div class="mc-icon">\u{1F3B5}</div><div class="mc-title">猜歌名</div>
@@ -263,33 +295,38 @@ function draw(){
             <div class="mc-desc">林夕、黄伟文、方文山…谁写了这句词？</div>
             <div class="mc-count">${WRITER_DB.length}题</div>
           </div>
+          <div class="mode-card mc-teresa" onclick="pickMode('teresa')">
+            <div class="mc-icon">🌸</div><div class="mc-title">邓丽君专区</div>
+            <div class="mc-desc">永远的歌后，国语·粤语·日语经典全收录</div>
+            <div class="mc-count">${TERESA_DB.length}题</div>
+          </div>
         </div>
       </div>`;return;}
 
   if(G.scr==='diff'){
-    const mx=G.mode==='writer'?WRITER_DB.length:SONG_DB.length;
-    const mLabel=G.mode==='song'?'\u{1F3B5} 猜歌名':G.mode==='artist'?'\u{1F3A4} 猜歌手':'✏️ 猜填词人';
-    const mColor=G.mode==='song'?'var(--neon2)':G.mode==='artist'?'var(--neon1)':'var(--neon4)';
+    const mx=G.mode==='writer'?WRITER_DB.length:G.mode==='teresa'?TERESA_DB.length:SONG_DB.length;
+    const mLabel=G.mode==='song'?'\u{1F3B5} 猜歌名':G.mode==='artist'?'\u{1F3A4} 猜歌手':G.mode==='teresa'?'\u{1F338} 邓丽君专区':'✏️ 猜填词人';
+    const mColor=G.mode==='song'?'var(--accent2)':G.mode==='artist'?'var(--accent1)':G.mode==='teresa'?'#ffb7c5':'var(--accent4)';
     A.innerHTML=`<div class="hd"><div class="hd-t" style="font-size:18px">猜歌词大挑战</div></div>
       <div class="ctr">
-        <div style="font-size:48px;margin-bottom:12px">${G.mode==='song'?'\u{1F3B5}':G.mode==='artist'?'\u{1F3A4}':'✏️'}</div>
+        <div style="font-size:48px;margin-bottom:12px">${G.mode==='song'?'\u{1F3B5}':G.mode==='artist'?'\u{1F3A4}':G.mode==='teresa'?'\u{1F338}':'✏️'}</div>
         <div style="font-size:24px;font-weight:800;color:${mColor}">${mLabel}</div>
-        <div style="font-size:14px;color:rgba(255,255,255,0.4);margin-top:8px">60秒计时 \xB7 连击加分 \xB7 30秒内额外+10分</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.3);margin-top:4px">题库共 ${mx} 题</div>
+        <div style="font-size:14px;color:var(--text-sub);margin-top:8px">${G.mode==='teresa'?'国语·粤语·日语 \xB7 60秒计时 \xB7 连击加分':'60秒计时 \xB7 连击加分 \xB7 30秒内额外+10分'}</div>
+        <div style="font-size:13px;color:#94a3b8;margin-top:4px">题库共 ${mx} 题</div>
         <div class="diff-row" style="margin-top:24px;max-width:340px;width:100%">
-          <button class="diff" onclick="start(8)" style="border-color:rgba(255,255,255,0.12)">快速<br><small style="color:rgba(255,255,255,0.3)">8题</small></button>
-          <button class="diff a" onclick="start(${Math.min(15,mx)})" style="border-color:${mColor}40;background:${mColor}15">标准<br><small style="color:rgba(255,255,255,0.3)">${Math.min(15,mx)}题</small></button>
-          <button class="diff" onclick="start(${Math.min(25,mx)})" style="border-color:rgba(255,255,255,0.12)">挑战<br><small style="color:rgba(255,255,255,0.3)">${Math.min(25,mx)}题</small></button>
+          <button class="diff" onclick="start(8)" style="border-color:rgba(0,0,0,0.08)">快速<br><small style="color:#94a3b8">8题</small></button>
+          <button class="diff a" onclick="start(${Math.min(15,mx)})" style="border-color:${mColor}40;background:${mColor}15">标准<br><small style="color:#94a3b8">${Math.min(15,mx)}题</small></button>
+          <button class="diff" onclick="start(${Math.min(25,mx)})" style="border-color:rgba(0,0,0,0.08)">挑战<br><small style="color:#94a3b8">${Math.min(25,mx)}题</small></button>
         </div>
         <button class="back" onclick="G.scr='start';draw()">← 返回选择</button>
       </div>`;return;}
 
   if(G.scr==='end'){const t=getTitle();
-    const mLabel=G.mode==='song'?'猜歌名':G.mode==='artist'?'猜歌手':'猜填词人';
+    const mLabel=G.mode==='song'?'猜歌名':G.mode==='artist'?'猜歌手':G.mode==='teresa'?'邓丽君专区':'猜填词人';
     A.innerHTML=`<div class="hd"><div class="hd-t" style="font-size:16px">猜歌词大挑战 \xB7 ${mLabel}</div></div>
       <div class="ctr"><div class="tb">${t}</div><div class="fs">${G.sc}</div>
-        <div style="color:rgba(255,255,255,0.35);font-size:13px;line-height:2.2">
-          答对 <b style="color:var(--neon4)">${G.ok}</b>/${G.tot} \xB7 最高 <b style="color:#fbbf24">${G.mcb}</b> 连击<br>满分 ${G.tot*40}分</div>
+        <div style="color:var(--text-sub);font-size:13px;line-height:2.2">
+          答对 <b style="color:var(--accent4)">${G.ok}</b>/${G.tot} \xB7 最高 <b style="color:#d97706">${G.mcb}</b> 连击<br>满分 ${G.tot*40}分</div>
         <button class="nxt" onclick="start(${G.tot})" style="max-width:260px;margin-top:20px">再来一局</button>
         <button class="sh" onclick="share()">\u{1F4E4} 分享战绩</button>
         <button class="back" onclick="G.scr='start';draw()">← 换个模式</button>
@@ -298,9 +335,9 @@ function draw(){
   const q=G.qs[G.ci];if(!q)return;
   const isR=G.scr==='res',ans=getAns(q),isOk=G.inp.trim()===ans;
   const pct=[.3,.55,.8,1][Math.min(G.rv,3)];
-  const tl=G.mode==='artist'?'猜歌手':G.mode==='writer'?'猜填词人':'猜歌名';
-  const tc=G.mode==='artist'?'qb-artist':G.mode==='writer'?'qb-writer':'qb-song';
-  const lt=q.g==='c'?'<span class="lang-tag lt-c">粤语</span>':q.g==='m'?'<span class="lang-tag lt-m">国语</span>':'';
+  const tl=G.mode==='artist'?'猜歌手':G.mode==='writer'?'猜填词人':G.mode==='teresa'?'猜歌名':'猜歌名';
+  const tc=G.mode==='artist'?'qb-artist':G.mode==='writer'?'qb-writer':G.mode==='teresa'?'qb-teresa':'qb-song';
+  const lt=q.g==='c'?'<span class="lang-tag lt-c">粤语</span>':q.g==='m'?'<span class="lang-tag lt-m">国语</span>':q.g==='j'?'<span class="lang-tag lt-j">日语</span>':'';
   const nc=[...ans];
 
   A.innerHTML=`
@@ -317,13 +354,13 @@ function draw(){
       ${isR?`
         <div class="res">
           <div class="res-ic">${isOk?'\u{1F389}':'\u{1F622}'}</div>
-          <div class="res-msg" style="color:${isOk?'var(--neon4)':'#f87171'}">${isOk?'答对了！':'很遗憾~'}</div>
+          <div class="res-msg" style="color:${isOk?'var(--accent4)':'#f87171'}">${isOk?'答对了！':'很遗憾~'}</div>
           <div class="res-name">${ans}</div>
           <div class="res-det">${G.mode==='artist'?'歌曲：'+q.n:G.mode==='writer'?'填词人':'歌手：'+q.a}<br>${q.c}</div>
           ${isOk?`<div class="res-pts">+${[30,25,15,10][Math.min(G.rv,3)]}${G.cb>1?' +'+Math.min((G.cb-1)*5,20)+'连击':''}${G.tb?' +10限时':''}分</div>`:''}
         </div>
-        <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;text-align:center;margin:8px 0">
-          <div class="l-main" style="font-size:18px;color:var(--neon3)">"${q.l}"</div>
+        <div style="background:#f8fafc;border:1px solid rgba(0,0,0,0.06);border-radius:14px;padding:16px;text-align:center;margin:8px 0">
+          <div class="l-main" style="font-size:18px;color:var(--accent3)">"${q.l}"</div>
           <div class="l-sub" style="font-size:13px;margin-top:6px">${q.l2}</div>
         </div>
         <button class="nxt" onclick="nxt()">${G.ci+1>=G.tot?'\u{1F3C1} 查看成绩':'\u{1F449} 下一题'}</button>
@@ -331,7 +368,7 @@ function draw(){
         <div class="lyric-wrap">
           <div class="lyric-box"><div class="l-main">${mask(q.l,pct)}</div></div>
           ${G.rv>=1?`<div class="lyric-box" style="min-height:50px;padding:16px"><div class="l-sub" style="font-size:16px">${mask(q.l2,Math.max(0,pct-.3))}</div></div>`:''}
-          <div class="hints"><span class="hint">\u{1F3A4} ${q.c}</span>${G.rv>=2&&G.mode==='song'?`<span class="hint" style="color:var(--neon1)">\u{1F464} ${q.a}</span>`:''}${G.rv>=2&&G.mode==='artist'?`<span class="hint" style="color:var(--neon1)">\u{1F3B5} ${q.n}</span>`:''}<span class="hint">\u{1F4DD} ${nc.length}个字</span></div>
+          <div class="hints"><span class="hint">\u{1F3A4} ${G.mode==='artist'?(q.g==='c'?'粤语歌曲':'国语歌曲'):q.c}</span>${G.rv>=2&&G.mode==='song'?`<span class="hint" style="color:var(--accent1)">\u{1F464} ${q.a}</span>`:''}${G.rv>=2&&G.mode==='artist'?`<span class="hint" style="color:var(--accent1)">\u{1F3B5} ${q.n}</span>`:''}<span class="hint">\u{1F4DD} ${nc.length}个字</span></div>
         </div>
         <div class="ans">
           <div class="ans-label">✍️ 请输入${tl.slice(1)}（${nc.length}个字）\xB7 剩余${3-G.at}次机会</div>
